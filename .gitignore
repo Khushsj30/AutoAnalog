@@ -32,8 +32,6 @@ plots/**/*.svg
 plots/**/*.html
 
 # Generated reports (reproducible from results/)
-docs/reports/*.html
-docs/reports/*.pdf
 
 # Keep placeholder .gitkeep files so empty dirs are tracked
 !**/.gitkeep
