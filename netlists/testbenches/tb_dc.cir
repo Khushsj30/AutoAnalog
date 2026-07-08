@@ -1,0 +1,49 @@
+* =============================================================================
+* AutoAnalog — Testbench: DC Sweep
+* =============================================================================
+* Purpose : Measure DC transfer characteristic
+*             - Input offset voltage (Vos)
+*             - Linear input range
+*             - Output swing limits
+*             - Large-signal DC gain (slope of Vout vs Vin)
+*
+* Method  : Unity-gain (buffer) configuration. Sweep Vin from 0 to VDD.
+*           Measure Vout. Offset = Vin where Vout = Vin.
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — DC Transfer Characteristic
+
+.INCLUDE '../models/tsmc180nm_tt.lib'
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+VDD    VDD   0    DC 1.8
+Ibias  VDD   VBIAS  DC 15U
+
+* Input voltage source being swept
+VIN    INP   0    DC 0.9
+
+* Unity-gain feedback: OUT connected to INN
+XOPA   INP   OUT   OUT   VDD   0   VBIAS   OPAMP_2STAGE
+
+CL     OUT   0    10P
+RL     OUT   0    100K
+
+.OP
+
+* Sweep Vin from 0V to 1.8V in 5mV steps
+.DC VIN 0 1.8 0.005
+
+.SAVE V(OUT) V(INP)
+
+* Measure offset voltage: where does Vout = Vin?
+.MEASURE DC VOFFSET   FIND V(INP) WHEN V(OUT)=V(INP)
+
+* Measure output swing high/low (where gain drops below 0.9 V/V)
+.MEASURE DC VOUT_HIGH WHEN V(OUT)=1.6
+.MEASURE DC VOUT_LOW  WHEN V(OUT)=0.2
+
+.OPTIONS NUMDGT=6
+
+.END

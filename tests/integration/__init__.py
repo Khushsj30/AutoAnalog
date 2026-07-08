@@ -1,0 +1,1 @@
+# AutoAnalog — Integration tests

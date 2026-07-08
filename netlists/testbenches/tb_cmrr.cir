@@ -1,0 +1,53 @@
+* =============================================================================
+* AutoAnalog — Testbench: CMRR Analysis
+* =============================================================================
+* Purpose : Measure Common-Mode Rejection Ratio
+*           CMRR = Adiff / Acm = |Vout_diff / Vout_cm|
+*
+* Method  : Two separate AC analyses:
+*   1. Differential gain: VIN+ = +0.5V AC, VIN- = -0.5V AC
+*   2. Common-mode gain:  VIN+ = VIN- = 1V AC
+*   CMRR_dB = 20·log10(|Adiff / Acm|)
+*
+* Expected: CMRR ≥ 80 dB
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — CMRR Analysis
+
+.INCLUDE '../models/tsmc180nm_tt.lib'
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+VDD    VDD   0    DC 1.8
+Ibias  VDD   VBIAS  DC 15U
+
+* Differential mode: +0.5V on INP, -0.5V on INN (1V differential)
+VINP_DIFF  INP_DIFF  0  DC 0.9  AC 0.5
+VINN_DIFF  INN_DIFF  0  DC 0.9  AC -0.5
+RFEEDBACK_DIFF  OUT_DIFF  INN_DIFF  1G
+XOPA_DIFF  INP_DIFF  INN_DIFF  OUT_DIFF  VDD  0  VBIAS  OPAMP_2STAGE
+CL_DIFF    OUT_DIFF  0  10P
+
+* Common mode: same AC signal on both inputs
+VINP_CM  INP_CM  0  DC 0.9  AC 1.0
+VINN_CM  INN_CM  0  DC 0.9  AC 1.0
+RFEEDBACK_CM  OUT_CM  INN_CM  1G
+XOPA_CM  INP_CM  INN_CM  OUT_CM  VDD  0  VBIAS  OPAMP_2STAGE
+CL_CM    OUT_CM  0  10P
+
+.OP
+.AC DEC 100 1 1G
+
+.SAVE V(OUT_DIFF) V(OUT_CM)
+
+* Differential gain at DC (1 Hz)
+.MEASURE AC ADIFF_DB  FIND VDB(OUT_DIFF)  AT=1
+* Common-mode gain at DC
+.MEASURE AC ACM_DB    FIND VDB(OUT_CM)    AT=1
+* CMRR = Adiff_dB - Acm_dB
+* (post-processing in Python subtracts these)
+
+.OPTIONS NUMDGT=6
+
+.END

@@ -1,0 +1,18 @@
+.TITLE AutoAnalog Bias Diagnostic
+
+.INCLUDE 'models/tsmc180nm_tt.lib'
+.INCLUDE 'netlists/subcircuits/opamp_2stage.cir'
+
+VDD    VDD    0    DC 1.8
+VBIAS  VBIAS  0    DC 0.7
+VIN    INP    0    DC 0.9
+VINN   INN    0    DC 0.9
+RFEEDBACK  OUT  INN  1G
+CL     OUT    0    10P
+
+XOPA   INP   INN   OUT   VDD   0   VBIAS   OPAMP_2STAGE
+
+.DC VBIAS 0.3 1.2 0.01
+.PRINT DC V(XOPA.VTAIL) V(XOPA.VOUT1) V(OUT)
+.OPTIONS NUMDGT=6 NOMOD
+.END

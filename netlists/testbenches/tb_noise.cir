@@ -1,0 +1,48 @@
+* =============================================================================
+* AutoAnalog — Testbench: Noise Analysis
+* =============================================================================
+* Purpose : Measure input-referred noise spectral density
+*             - Thermal noise floor
+*             - 1/f (flicker) noise corner frequency
+*             - Total integrated noise over bandwidth
+*
+* Method  : Closed-loop unity-gain noise simulation.
+*           ngspice reports output noise; we divide by gain to get
+*           input-referred noise.
+*
+* Expected: Input-referred noise ≤ 50 nV/√Hz at 1 kHz
+*
+* PMOS input pair advantage: Lower KF → lower 1/f noise corner
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — Noise Analysis
+
+.INCLUDE '../models/tsmc180nm_tt.lib'
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+VDD    VDD   0    DC 1.8
+Ibias  VDD   VBIAS  DC 15U
+VIN    INP   0    DC 0.9  AC 1
+VINN   INN   0    DC 0.9
+RFEEDBACK  OUT  INN  1G
+
+CL     OUT   0    10P
+RL     OUT   0    100K
+
+XOPA   INP   INN   OUT   VDD   0   VBIAS   OPAMP_2STAGE
+
+.OP
+.AC DEC 20 1 100MEG
+.NOISE V(OUT) VIN DEC 20 1 100MEG
+
+.SAVE V(OUT) INOISE ONOISE
+
+.MEASURE NOISE INPUT_NOISE_1K   FIND INOISE AT=1K
+.MEASURE NOISE INPUT_NOISE_10K  FIND INOISE AT=10K
+.MEASURE NOISE INPUT_NOISE_1M   FIND INOISE AT=1MEG
+
+.OPTIONS NUMDGT=6
+
+.END

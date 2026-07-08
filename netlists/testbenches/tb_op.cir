@@ -1,0 +1,94 @@
+* =============================================================================
+* AutoAnalog — Testbench: Operating Point Analysis
+* =============================================================================
+* Purpose : Verify DC bias conditions — all transistors in saturation,
+*           correct quiescent currents, correct node voltages.
+*
+* Expected results:
+*   VTAIL  ≈ VDD - |Vsgp| ≈ 1.8 - 0.65 = 1.15V
+*   VOUT1  ≈ VDD/2 = 0.9V  (stage 1 output, ideally mid-supply)
+*   VOUT   ≈ 0.9V          (closed-loop operating point with Vcm input)
+*   Id_M1  = Id_M2 ≈ 15µA
+*   Id_M5  ≈ 30µA
+*   Id_M6  = Id_M7 ≈ 150µA
+*
+* Output: results/operating_point/op_results.txt
+*         results/operating_point/op_currents.csv
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — Operating Point
+
+* --- Include process model ---
+.INCLUDE '../models/tsmc180nm_tt.lib'
+
+* --- Include op-amp subcircuit ---
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+* --- Supply voltages ---
+VDD  VDD  0  DC 1.8
+VSS  0    0  DC 0
+
+* --- Bias current source ---
+* Sets Ibias = 15µA through M8 diode
+* In a real chip this comes from a bandgap reference
+* Here we use an ideal current source for testbench simplicity
+Ibias  VDD  VBIAS  DC 15U
+
+* --- Common-mode input voltage ---
+* Apply Vcm = 0.9V (mid-supply) to both inputs
+* This is the quiescent operating point
+Vinp  INP  0  DC 0.9
+Vinn  INN  0  DC 0.9
+
+* --- Load ---
+* Nominal load: 10pF || 100kΩ
+CL   OUT  0  10P
+RL   OUT  0  100K
+
+* --- Op-amp instance (open-loop for bias check) ---
+* We also run closed-loop with unity-gain feedback to check output DC level
+* Open-loop instance:
+XOPA_OL  INP  INN  VOUT_OL  VDD  0  VBIAS  OPAMP_2STAGE
+
+* Closed-loop instance (unity-gain buffer):
+* Connect output back to inverting input for stable DC operating point
+XOPA_CL  INP  VOUT_CL  VOUT_CL  VDD  0  VBIAS  OPAMP_2STAGE
+
+* Loads for each instance
+CL_OL   VOUT_OL  0  10P
+RL_OL   VOUT_OL  0  100K
+CL_CL   VOUT_CL  0  10P
+RL_CL   VOUT_CL  0  100K
+
+* =============================================================================
+* Analysis
+* =============================================================================
+
+* Operating point — prints all node voltages and branch currents
+.OP
+
+* Save all node voltages and branch currents
+.SAVE ALL
+
+* =============================================================================
+* Output control
+* =============================================================================
+
+* Print key node voltages to output
+.MEASURE OP V_TAIL   FIND V(XOPA_OL.VTAIL)  AT=0
+.MEASURE OP V_OUT1   FIND V(XOPA_OL.VOUT1)  AT=0
+.MEASURE OP V_OUT_OL FIND V(VOUT_OL)        AT=0
+.MEASURE OP V_OUT_CL FIND V(VOUT_CL)        AT=0
+.MEASURE OP V_BIAS   FIND V(VBIAS)          AT=0
+
+* Print key branch currents
+.MEASURE OP I_BIAS   FIND I(Ibias)          AT=0
+.MEASURE OP I_M5     FIND I(XOPA_OL.M5#drain) AT=0
+.MEASURE OP I_M1     FIND I(XOPA_OL.M1#drain) AT=0
+.MEASURE OP I_M6     FIND I(XOPA_OL.M6#drain) AT=0
+
+.OPTIONS SAVECURRENTS
+
+.END

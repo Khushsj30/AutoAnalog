@@ -1,0 +1,58 @@
+* =============================================================================
+* AutoAnalog — Testbench: Transient Analysis (Slew Rate + Settling)
+* =============================================================================
+* Purpose : Measure time-domain performance:
+*             - Positive slew rate (SR+)
+*             - Negative slew rate (SR-)
+*             - Settling time to 0.1%
+*             - Overshoot percentage
+*             - Rise time / Fall time
+*
+* Method  : Unity-gain buffer driven by fast pulse (rise/fall = 1ns).
+*           The slew rate is limited by Itail/Cc, not the input edge rate.
+*
+* Expected:
+*   SR ≥ 10 V/µs  →  Itail/Cc = 30µA/3pF = 10 V/µs ✓
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — Transient / Slew Rate
+
+.INCLUDE '../models/tsmc180nm_tt.lib'
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+VDD    VDD   0    DC 1.8
+Ibias  VDD   VBIAS  DC 15U
+
+* Large-signal pulse: 0.4V to 1.4V (±0.5V swing around Vcm)
+* Rise/fall = 1ns (much faster than op-amp bandwidth — reveals slew limiting)
+VIN    INP   0  PULSE(0.4 1.4 100N 1N 1N 4U 8U)
+
+* Unity-gain buffer
+XOPA   INP   OUT   OUT   VDD   0   VBIAS   OPAMP_2STAGE
+
+CL     OUT   0    10P
+RL     OUT   0    100K
+
+.OP
+
+* Transient: 1ns timestep, 10µs total (captures one full pulse)
+.TRAN 1N 10U
+
+.SAVE V(OUT) V(INP)
+
+* Slew rate measurements
+* SR+ : maximum dV/dt on rising edge (V/s)
+.MEASURE TRAN SR_POS   SLOPE V(OUT) WHEN V(OUT)=0.9 RISE=1
+* SR- : maximum dV/dt on falling edge
+.MEASURE TRAN SR_NEG   SLOPE V(OUT) WHEN V(OUT)=0.9 FALL=1
+
+* Settling time to 0.1% of final value
+* Final value = 1.4V, 0.1% of 1V swing = 1mV → settle to within [1.399, 1.401]
+.MEASURE TRAN T_SETTLE  TRIG V(OUT)=0.9 RISE=1
++                        TARG V(OUT)=1.399 RISE=1
+
+.OPTIONS NUMDGT=6
+
+.END

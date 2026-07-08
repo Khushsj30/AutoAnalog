@@ -1,0 +1,2 @@
+date,vbias_v,dc_gain_db,gbw_mhz,phase_margin_deg,vout1_v,vtail_v,topology,process,temp_c,status
+2026-07-08T22:06:29.989725,0.57,61.9,12.9,75.0,1.078,1.648,two_stage_miller,tsmc180nm_tt,27,BASELINE

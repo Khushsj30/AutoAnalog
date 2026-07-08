@@ -1,0 +1,263 @@
+project:
+  name: AutoAnalog
+  title: AI-Assisted Design and Optimization Platform for a Two-Stage CMOS Op-Amp
+  version: 1.0.0
+  author: Khush
+  github_username: Khushsj30
+  github_repo: https://github.com/Khushsj30/AutoAnalog
+  description: 'Automated analog IC design framework that synthesizes, optimizes,
+    characterizes and documents a two-stage CMOS operational amplifier using SPICE
+    simulations and Python-based design-space exploration.
+
+    '
+  process_node: TSMC 180nm CMOS
+  created: '2025'
+paths:
+  root: .
+  config: config
+  netlists: netlists
+  testbenches: netlists/testbenches
+  subcircuits: netlists/subcircuits
+  models: models
+  results: results
+  plots: plots
+  docs: docs
+  reports: docs/reports
+  scripts: scripts
+  python: python
+  schematics: schematics
+  layouts: layouts
+  logs: logs
+process:
+  name: TSMC 180nm CMOS
+  model_file: models/tsmc180nm.lib
+  corner_files:
+    tt: models/corners/tt.lib
+    ff: models/corners/ff.lib
+    ss: models/corners/ss.lib
+    fs: models/corners/fs.lib
+    sf: models/corners/sf.lib
+  nmos:
+    vth0: 0.5
+    tox: 4.1e-09
+    cox: 0.0086
+    un: 270e-4
+    lambda: 0.06
+    vdsat: 0.15
+    lmin: 180e-9
+    wmin: 220e-9
+  pmos:
+    vth0: -0.5
+    tox: 4.1e-09
+    cox: 0.0086
+    up: 90e-4
+    lambda: 0.08
+    vdsat: -0.15
+    lmin: 180e-9
+    wmin: 220e-9
+specifications:
+  vdd: 1.8
+  vss: 0.0
+  vcm: 0.9
+  gain_db_min: 80.0
+  gbw_min_hz: 10.0e6
+  phase_margin_min_deg: 60.0
+  slew_rate_min: 10.0e6
+  cmrr_min_db: 80.0
+  psrr_min_db: 70.0
+  power_max_w: 0.001
+  noise_input_max: 50e-9
+  offset_max_v: 0.005
+  output_resistance_max: 1000.0
+  cl: 1.0e-11
+  rl: 100.0e3
+  icmr_low: 0.3
+  icmr_high: 1.2
+  output_swing_low: 0.2
+  output_swing_high: 1.6
+initial_design:
+  M1_W: 2.0e-05
+  M1_L: 500e-9
+  M2_W: 2.0e-05
+  M2_L: 500e-9
+  M3_W: 1.0e-05
+  M3_L: 500e-9
+  M4_W: 1.0e-05
+  M4_L: 500e-9
+  M5_W: 1.0e-05
+  M5_L: 500e-9
+  M6_W: 4.0e-05
+  M6_L: 360e-9
+  M7_W: 2.0e-05
+  M7_L: 360e-9
+  M8_W: 5.0e-06
+  M8_L: 500e-9
+  Cc: 3.0e-12
+  Rc: 700.0
+  Ibias: 2.0e-05
+  Itail: 4.0e-05
+  I2nd: 0.0002
+  VBIAS: 0.57
+optimization:
+  bounds:
+    M1_W:
+    - 5.0e-06
+    - 5.0e-05
+    M1_L:
+    - 360e-9
+    - 1.0e-06
+    M3_W:
+    - 2.0e-06
+    - 3.0e-05
+    M3_L:
+    - 360e-9
+    - 1.0e-06
+    M5_W:
+    - 2.0e-06
+    - 2.0e-05
+    M5_L:
+    - 360e-9
+    - 1.0e-06
+    M6_W:
+    - 1.0e-05
+    - 0.0001
+    M6_L:
+    - 180e-9
+    - 720e-9
+    M7_W:
+    - 5.0e-06
+    - 5.0e-05
+    M7_L:
+    - 180e-9
+    - 720e-9
+    Cc:
+    - 5.0e-13
+    - 5.0e-12
+    Ibias:
+    - 5.0e-06
+    - 5.0e-05
+  grid_search:
+    enabled: true
+    points_per_param: 5
+  random_search:
+    enabled: true
+    n_iterations: 500
+    seed: 42
+  nsga2:
+    enabled: true
+    population_size: 100
+    n_generations: 50
+    crossover_prob: 0.9
+    mutation_prob: 0.1
+    seed: 42
+  bayesian:
+    enabled: true
+    n_initial_points: 20
+    n_iterations: 100
+    acquisition: EI
+    seed: 42
+  objective_weights:
+    gain: 0.25
+    gbw: 0.25
+    phase_margin: 0.2
+    power: 0.15
+    slew_rate: 0.1
+    noise: 0.05
+simulation:
+  simulator: ngspice
+  simulator_path: ngspice
+  timeout_seconds: 120
+  temperature:
+    nominal: 27
+    sweep:
+    - -40
+    - -20
+    - 0
+    - 27
+    - 50
+    - 80
+    - 125
+  supply_corners:
+    nominal: 1.8
+    low: 1.62
+    high: 1.98
+  ac:
+    start_freq: 1.0
+    stop_freq: 1.0e9
+    points_per_decade: 100
+  dc:
+    vin_start: 0.0
+    vin_stop: 1.8
+    vin_step: 0.01
+  transient:
+    step: 1.0e-09
+    stop: 1.0e-05
+    vin_pulse_low: 0.0
+    vin_pulse_high: 1.8
+    pulse_width: 2.0e-06
+    rise_time: 1.0e-09
+    fall_time: 1.0e-09
+  noise:
+    start_freq: 1.0
+    stop_freq: 100.0e6
+    points_per_decade: 20
+    output_node: vout
+    input_source: vin
+  montecarlo:
+    n_runs: 200
+    seed: 42
+    mismatch_sigma: 0.02
+    process_sigma: 0.05
+  pvt_corners:
+  - name: TT_NOM
+    process: tt
+    voltage: 1.8
+    temperature: 27
+  - name: FF_FAST
+    process: ff
+    voltage: 1.98
+    temperature: -40
+  - name: SS_SLOW
+    process: ss
+    voltage: 1.62
+    temperature: 125
+  - name: FS_MIX1
+    process: fs
+    voltage: 1.8
+    temperature: 27
+  - name: SF_MIX2
+    process: sf
+    voltage: 1.8
+    temperature: 27
+logging:
+  level: INFO
+  log_to_file: true
+  log_dir: logs
+  log_filename: autoanalog.log
+  max_bytes: 10485760
+  backup_count: 5
+  format: '%(asctime)s | %(levelname)-8s | %(name)-30s | %(message)s'
+  date_format: '%Y-%m-%d %H:%M:%S'
+reporting:
+  formats:
+  - html
+  - pdf
+  - markdown
+  output_dir: docs/reports
+  template_dir: python/autoanalog/reporting/templates
+  include_plots: true
+  include_raw_data: false
+  company_name: AutoAnalog
+  author: Khush
+  logo: null
+git:
+  remote: https://github.com/Khushsj30/AutoAnalog.git
+  branch: main
+  auto_commit: false
+baseline_results:
+  dc_gain_db: 61.9
+  gbw_mhz: 12.9
+  phase_margin_deg: 75.0
+  vbias_v: 0.57
+  status: verified_ngspice
+  note: Baseline before optimization. GBW and PM meet spec. Gain needs optimizer.

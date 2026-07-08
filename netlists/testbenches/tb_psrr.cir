@@ -1,0 +1,41 @@
+* =============================================================================
+* AutoAnalog — Testbench: PSRR Analysis
+* =============================================================================
+* Purpose : Measure Power Supply Rejection Ratio
+*           PSRR+ = Adiff / (Vout due to VDD ripple)
+*           PSRR- = Adiff / (Vout due to VSS ripple)
+*
+* Method  : Inject AC signal on VDD (or VSS) while inputs held at DC.
+*           Measure output ripple. PSRR = DC_gain / supply_gain.
+*
+* Expected: PSRR ≥ 70 dB
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — PSRR Analysis
+
+.INCLUDE '../models/tsmc180nm_tt.lib'
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+* Supply with AC ripple superimposed for PSRR+ measurement
+VDD_PSRR   VDD_PSRR   0   DC 1.8  AC 1.0
+IBIAS_PSRR VDD_PSRR   VBIAS_PSRR   DC 15U
+
+VINP_PSRR  INP_PSRR  0  DC 0.9
+VINN_PSRR  INN_PSRR  0  DC 0.9
+RFEEDBACK  OUT_PSRR  INN_PSRR  1G
+
+XOPA_PSRR  INP_PSRR  INN_PSRR  OUT_PSRR  VDD_PSRR  0  VBIAS_PSRR  OPAMP_2STAGE
+CL_PSRR    OUT_PSRR  0  10P
+
+.OP
+.AC DEC 100 1 1G
+
+.SAVE V(OUT_PSRR)
+
+.MEASURE AC PSRR_PLUS_DC  FIND VDB(OUT_PSRR)  AT=1
+
+.OPTIONS NUMDGT=6
+
+.END

@@ -1,0 +1,48 @@
+* =============================================================================
+* AutoAnalog — Testbench: PVT Corner Analysis
+* =============================================================================
+* Purpose : Verify performance across all process-voltage-temperature corners
+*
+* Corners simulated:
+*   TT_NOM : Typical-Typical,  VDD=1.80V, T=27°C   (nominal)
+*   FF_FAST: Fast-Fast,        VDD=1.98V, T=-40°C  (best case speed)
+*   SS_SLOW: Slow-Slow,        VDD=1.62V, T=125°C  (worst case speed)
+*
+* This file runs TT corner. Python automation runs all corners by
+* modifying .TEMP and .LIB calls for each corner iteration.
+*
+* Author  : AutoAnalog Framework
+* =============================================================================
+
+.TITLE AutoAnalog Two-Stage CMOS Op-Amp — TT Corner (Nominal)
+
+* Select corner via .LIB (Python replaces this line for each corner)
+.INCLUDE '../models/tsmc180nm_tt.lib'
+
+.INCLUDE '../subcircuits/opamp_2stage.cir'
+
+.TEMP 27
+
+VDD    VDD   0    DC 1.8
+Ibias  VDD   VBIAS  DC 15U
+VIN    INP   0    DC 0.9  AC 1.0
+VINN   INN   0    DC 0.9
+RFEEDBACK  OUT  INN  1G
+
+CL     OUT   0    10P
+RL     OUT   0    100K
+
+XOPA   INP   INN   OUT   VDD   0   VBIAS   OPAMP_2STAGE
+
+.OP
+.AC DEC 100 1 1G
+
+.SAVE V(OUT)
+
+.MEASURE AC DC_GAIN_DB  FIND VDB(OUT)  AT=1
+.MEASURE AC GBW_HZ      WHEN VDB(OUT)=0 FALL=1
+.MEASURE AC PHASE_AT_GBW FIND VP(OUT)  WHEN VDB(OUT)=0 FALL=1
+
+.OPTIONS NUMDGT=6
+
+.END

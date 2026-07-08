@@ -1,0 +1,1 @@
+# AutoAnalog — Test suite root

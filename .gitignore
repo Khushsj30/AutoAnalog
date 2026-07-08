@@ -1,0 +1,71 @@
+# =============================================================================
+# AutoAnalog — .gitignore
+# =============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ngspice raw output (large binary files — store results CSVs instead)
+*.raw
+*.raw.gz
+*.out
+
+# Generated plots (reproducible from results/)
+plots/**/*.png
+plots/**/*.svg
+plots/**/*.html
+
+# Generated reports (reproducible from results/)
+docs/reports/*.html
+docs/reports/*.pdf
+
+# Keep placeholder .gitkeep files so empty dirs are tracked
+!**/.gitkeep
+
+# Large model files (document where to download them instead)
+models/*.lib
+models/corners/*.lib
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs (generated at runtime)
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# KLayout / Magic outputs
+*.gds
+*.mag
+*.ext
+*.drc

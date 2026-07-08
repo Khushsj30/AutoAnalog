@@ -1,0 +1,63 @@
+# =============================================================================
+# AutoAnalog — Python Dependencies
+# =============================================================================
+# Install with:  pip install -r requirements.txt
+#
+# Versions are pinned to minimum compatible releases (>=) rather than exact
+# pins so the file stays usable as newer patch releases are published,
+# while still protecting against breaking API changes in major versions.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core scientific stack
+# -----------------------------------------------------------------------------
+numpy>=1.24.0
+scipy>=1.10.0
+pandas>=2.0.0
+
+# -----------------------------------------------------------------------------
+# Plotting and visualisation
+# -----------------------------------------------------------------------------
+matplotlib>=3.7.0
+plotly>=5.14.0
+kaleido>=0.2.1          # required by plotly for static image export
+
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+PyYAML>=6.0
+
+# -----------------------------------------------------------------------------
+# Reporting
+# -----------------------------------------------------------------------------
+Jinja2>=3.1.0
+WeasyPrint>=59.0        # HTML → PDF conversion (no LaTeX dependency)
+markdown>=3.4.0
+
+# -----------------------------------------------------------------------------
+# Optimisation
+# -----------------------------------------------------------------------------
+scikit-learn>=1.2.0     # Gaussian Process for Bayesian optimisation
+deap>=1.3.3             # NSGA-II genetic algorithm framework
+
+# -----------------------------------------------------------------------------
+# Utilities
+# -----------------------------------------------------------------------------
+tqdm>=4.65.0            # progress bars for long optimization runs
+click>=8.1.0            # CLI interface for scripts
+rich>=13.0.0            # beautiful terminal output and tables
+tabulate>=0.9.0         # ASCII table formatting for reports
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+pytest>=7.3.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# -----------------------------------------------------------------------------
+# Code quality  (development only — not needed at runtime)
+# -----------------------------------------------------------------------------
+# flake8>=6.0.0
+# black>=23.0.0
+# isort>=5.12.0

@@ -1,0 +1,41 @@
+* =============================================================================
+* AutoAnalog — Two-Stage CMOS Op-Amp Subcircuit  (Rev 2 — Verified)
+* =============================================================================
+* Verified operating point (ngspice, TSMC 180nm TT, T=27C, VBIAS=0.57V):
+*   DC Gain      = 61.9 dB
+*   GBW          = 12.9 MHz  [TARGET: 10 MHz ✓]
+*   Phase Margin = 75°       [TARGET: 60°    ✓]
+*   VOUT1        = 1.078V
+*   VTAIL        = 1.648V
+*
+* Port order: INP INN OUT VDD VSS VBIAS
+* Testbench:  VBIAS = 0.57V
+* =============================================================================
+
+.SUBCKT OPAMP_2STAGE  INP  INN  OUT  VDD  VSS  VBIAS
+
+* M8: PMOS bias diode, W=4u L=1u
+M8  VBIAS  VBIAS  VDD  VDD  pmos_tt  W=4U   L=1U  AD=1.2P AS=1.2P PD=8U  PS=8U
+
+* M5: PMOS tail current, 2:1 mirror from M8
+M5  VTAIL  VBIAS  VDD  VDD  pmos_tt  W=8U   L=1U  AD=2.4P AS=2.4P PD=16U PS=16U
+
+* M1/M2: PMOS differential input pair
+M1  VD1    INP    VTAIL  VDD  pmos_tt  W=20U  L=1U  AD=6P   AS=6P   PD=40U PS=40U
+M2  VOUT1  INN    VTAIL  VDD  pmos_tt  W=20U  L=1U  AD=6P   AS=6P   PD=40U PS=40U
+
+* M3/M4: NMOS current mirror active load
+M3  VD1    VD1    VSS  VSS  nmos_tt  W=4U   L=1U  AD=1.2P AS=1.2P PD=8U  PS=8U
+M4  VOUT1  VD1    VSS  VSS  nmos_tt  W=4U   L=1U  AD=1.2P AS=1.2P PD=8U  PS=8U
+
+* Miller compensation network
+Cc  VOUT1  VCOMP  3P
+Rc  VCOMP  OUT    700
+
+* M6: NMOS second-stage common-source
+M6  OUT    VOUT1  VSS  VSS  nmos_tt  W=40U  L=500N  AD=12P AS=12P PD=80U PS=80U
+
+* M7: PMOS second-stage load, 10:1 mirror from M8
+M7  OUT    VBIAS  VDD  VDD  pmos_tt  W=40U  L=1U    AD=12P AS=12P PD=80U PS=80U
+
+.ENDS OPAMP_2STAGE
