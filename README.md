@@ -304,7 +304,7 @@ See [LICENSE](LICENSE) for full text.
 ---
 
 <p align="center">
-  Built with ngspice, Python, and no Cadence license.
+  Built with ngspice, Python.
   <br>
   <a href="https://github.com/Khushsj30/AutoAnalog">github.com/Khushsj30/AutoAnalog</a>
 </p>
