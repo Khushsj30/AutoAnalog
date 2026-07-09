@@ -1,9 +1,9 @@
-# AutoAnalog — Performance Summary Report
-*Generated: 2026-07-09 23:08*
+# AutoAnalog — Performance Summary
+*Generated: 2026-07-09 23:26*
 
 ---
 
-## Performance Summary
+## Metrics Table
 
 | Metric | Baseline | Optimized | Improvement |
 |--------|----------|-----------|-------------|
@@ -19,13 +19,13 @@
 
 Every number below is from real simulation data.
 
-**Bullet 1 (Lead with impact):**
+**Summary Point 1 (Overview):**
 > Designed and optimized a transistor-level two-stage CMOS operational amplifier using automated random-search design-space exploration across 2,000+ operating points, improving DC gain by 22% and GBW by 1.1×.
 
-**Bullet 2 (Technical depth):**
+**Summary Point 2 (Technical depth):**
 > Developed a Python-ngspice analog IC automation framework executing AC, DC, transient, Monte Carlo, PVT corner and temperature analyses with automatic Bode plot generation and HTML/PDF report synthesis.
 
-**Bullet 3 (Systems thinking):**
+**Summary Point 3 (Systems thinking):**
 > Built a random-search-based design-space optimization engine reducing manual transistor sizing effort significantly while simultaneously maximizing gain and phase margin across 2,000+ real SPICE simulations.
 
 ---
@@ -50,7 +50,7 @@ Every number below is from real simulation data.
 
 3. **How did you ensure stability?** Phase margin of 66° with Rc = 700Ω zero-cancellation resistor eliminating the RHP zero at gm6/Cc that would otherwise reduce PM by ~20°.
 
-4. **What did the optimizer actually do?** It ran 2,000+ random-search SPICE simulations in 1.5 minutes, each evaluating a different (W/L, Cc, VBIAS) combination, keeping the point that best satisfies a weighted gain/GBW/phase-margin score subject to hard PM/GBW constraints. (NSGA-II and Bayesian optimization are configured but not yet implemented — random search is the only optimizer actually executed.)
+4. **What did the optimizer actually do?** It ran 2,000+ random-search SPICE simulations in 1.4 minutes, each evaluating a different (W/L, Cc, VBIAS) combination, keeping the point that best satisfies a weighted gain/GBW/phase-margin score subject to hard PM/GBW constraints. (NSGA-II and Bayesian optimization are configured but not yet implemented — random search is the only optimizer actually executed.)
 
 5. **What were the hardest engineering challenges?** Bias point sensitivity — the PMOS threshold in the BSIM3v3 model differs from hand-calculation by ~0.2V, which shifts the tail current by 10×. Solved by adding VBIAS as an optimization variable.
 
@@ -59,7 +59,7 @@ Every number below is from real simulation data.
 ## Optimization Statistics
 
 - Total simulations run  : 2,000+
-- Optimization time      : 1.5 minutes
+- Optimization time      : 1.4 minutes
 - Feasible designs found : see results/optimization/
 - Best design parameters : see results/optimization/best_design.csv
 
