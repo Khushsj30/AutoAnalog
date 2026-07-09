@@ -1,7 +1,7 @@
 # =============================================================================
-# AutoAnalog — Resume Metrics Generator
+# AutoAnalog — Performance Summary Generator
 # =============================================================================
-# Automatically produces resume bullets, LinkedIn summary, and interview
+# Automatically produces a performance summary and supporting talking points
 # talking points from ACTUAL simulation and optimization results.
 #
 # This is what makes AutoAnalog unique — the percentages come from real data.
@@ -22,15 +22,15 @@ from autoanalog.logger import get_logger
 log = get_logger(__name__)
 
 
-class ResumeMetrics:
+class PerformanceSummary:
     """
-    Generates professional resume content from optimization results.
+    Generates a performance summary from optimization results.
 
     Usage
     -----
-    metrics = ResumeMetrics()
-    metrics.load_baseline(gain=61.9, gbw=12.9, pm=75.0, power=0.35)
-    metrics.load_optimized(gain=82.4, gbw=14.1, pm=68.2, power=0.21)
+    metrics = PerformanceSummary()
+    metrics.load_baseline(gain=61.9, gbw=15.6, pm=72.9, power=0.35)
+    metrics.load_optimized(gain=75.4, gbw=17.2, pm=65.8, power=0.35)  # power not yet measured
     report = metrics.generate()
     print(report)
     """
@@ -97,10 +97,10 @@ class ResumeMetrics:
         return ((baseline - optimized) / abs(baseline)) * 100.0
 
     def generate(self) -> str:
-        """Generate complete resume metrics report as Markdown string."""
+        """Generate complete performance summary report as Markdown string."""
 
         if not self.baseline or not self.optimized:
-            return "# Resume Metrics\n\nRun optimization first to generate metrics.\n"
+            return "# Performance Summary\n\nRun optimization first to generate metrics.\n"
 
         b = self.baseline
         o = self.optimized
@@ -113,13 +113,13 @@ class ResumeMetrics:
         n_sims     = self.opt_stats.get("n_simulations", 0)
         opt_time   = self.opt_stats.get("opt_time_min", 0)
 
-        # Format numbers for resume
+        # Format numbers for summary output
         gain_imp_str  = f"{gain_imp:.0f}%"
         gbw_ratio_str = f"{gbw_ratio:.1f}×"
         power_red_str = f"{power_red:.0f}%"
         n_sims_str    = f"{n_sims:,}+"
 
-        report = f"""# AutoAnalog — Resume Metrics Report
+        report = f"""# AutoAnalog — Performance Summary Report
 *Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}*
 
 ---
@@ -131,34 +131,35 @@ class ResumeMetrics:
 | DC Gain | {b['gain_db']:.1f} dB | {o['gain_db']:.1f} dB | **+{gain_imp:.0f}%** |
 | GBW | {b['gbw_mhz']:.1f} MHz | {o['gbw_mhz']:.1f} MHz | **{gbw_ratio:.1f}×** |
 | Phase Margin | {b['phase_margin_deg']:.0f}° | {o['phase_margin_deg']:.0f}° | {pm_change:+.0f}° |
-| Power | {b['power_mw']:.2f} mW | {o['power_mw']:.2f} mW | **-{power_red:.0f}%** |
+
+*Power is not yet measured by the optimizer's objective function — not reported until it is.*
 
 ---
 
-## Resume Bullets
+## Key Metrics
 
-Copy these directly onto your resume. Every number is from real simulation data.
+Every number below is from real simulation data.
 
 **Bullet 1 (Lead with impact):**
-> Designed and optimized a transistor-level two-stage CMOS operational amplifier using automated design-space exploration across {n_sims_str} operating points, improving DC gain by {gain_imp_str}, GBW by {gbw_ratio_str} and reducing power by {power_red_str}.
+> Designed and optimized a transistor-level two-stage CMOS operational amplifier using automated random-search design-space exploration across {n_sims_str} operating points, improving DC gain by {gain_imp_str} and GBW by {gbw_ratio_str}.
 
 **Bullet 2 (Technical depth):**
 > Developed a Python-ngspice analog IC automation framework executing AC, DC, transient, Monte Carlo, PVT corner and temperature analyses with automatic Bode plot generation and HTML/PDF report synthesis.
 
 **Bullet 3 (Systems thinking):**
-> Built a multi-objective optimization engine (Random Search + NSGA-II + Bayesian) reducing manual transistor sizing effort by over 90% while simultaneously maximizing gain, stability and energy efficiency across {n_sims_str} SPICE simulations.
+> Built a random-search-based design-space optimization engine reducing manual transistor sizing effort significantly while simultaneously maximizing gain and phase margin across {n_sims_str} real SPICE simulations.
 
 ---
 
 ## LinkedIn Summary
 
-> Built AutoAnalog — an end-to-end analog IC design automation platform for a two-stage CMOS op-amp in TSMC 180nm. Automated the full flow from transistor sizing to SPICE simulation to multi-objective optimization, achieving {o['gain_db']:.0f} dB gain, {o['gbw_mhz']:.1f} MHz GBW and {o['phase_margin_deg']:.0f}° phase margin using {n_sims_str} automated simulations. Stack: ngspice, Python, NSGA-II, Bayesian optimization, Matplotlib, Plotly.
+> Built AutoAnalog — an end-to-end analog IC design automation platform for a two-stage CMOS op-amp using TSMC-180nm-class process parameters. Automated the full flow from transistor sizing to SPICE simulation to random-search-based design optimization, achieving {o['gain_db']:.0f} dB gain, {o['gbw_mhz']:.1f} MHz GBW and {o['phase_margin_deg']:.0f}° phase margin using {n_sims_str} automated simulations. Stack: ngspice, Python, Matplotlib, Plotly.
 
 ---
 
 ## GitHub Project Description
 
-> Automated analog IC design framework that synthesizes, optimizes, characterizes and documents a two-stage CMOS operational amplifier using ngspice SPICE simulations and Python-based design-space exploration. Achieves {o['gain_db']:.0f} dB DC gain, {o['gbw_mhz']:.1f} MHz GBW and {o['phase_margin_deg']:.0f}° phase margin through multi-objective optimization across {n_sims_str} operating points.
+> Automated analog IC design framework that synthesizes, optimizes, characterizes and documents a two-stage CMOS operational amplifier using ngspice SPICE simulations and Python-based random-search design-space exploration. Achieves {o['gain_db']:.0f} dB DC gain, {o['gbw_mhz']:.1f} MHz GBW and {o['phase_margin_deg']:.0f}° phase margin across {n_sims_str} operating points.
 
 ---
 
@@ -170,7 +171,7 @@ Copy these directly onto your resume. Every number is from real simulation data.
 
 3. **How did you ensure stability?** Phase margin of {o['phase_margin_deg']:.0f}° with Rc = 700Ω zero-cancellation resistor eliminating the RHP zero at gm6/Cc that would otherwise reduce PM by ~20°.
 
-4. **What did the optimizer actually do?** It ran {n_sims_str} SPICE simulations in {opt_time:.0f} minutes, each evaluating a different (W/L, Cc, VBIAS) combination. NSGA-II found the Pareto front between gain and power consumption.
+4. **What did the optimizer actually do?** It ran {n_sims_str} random-search SPICE simulations in {opt_time:.1f} minutes, each evaluating a different (W/L, Cc, VBIAS) combination, keeping the point that best satisfies a weighted gain/GBW/phase-margin score subject to hard PM/GBW constraints. (NSGA-II and Bayesian optimization are configured but not yet implemented — random search is the only optimizer actually executed.)
 
 5. **What were the hardest engineering challenges?** Bias point sensitivity — the PMOS threshold in the BSIM3v3 model differs from hand-calculation by ~0.2V, which shifts the tail current by 10×. Solved by adding VBIAS as an optimization variable.
 
@@ -185,16 +186,16 @@ Copy these directly onto your resume. Every number is from real simulation data.
 
 ---
 
-*All metrics derived from ngspice SPICE simulation on TSMC 180nm BSIM3v3 model.*
+*All metrics derived from ngspice SPICE simulation using a generic TSMC-180nm-class BSIM3v3 model (not an NDA'd foundry PDK).*
 *Process: TT corner, T=27°C, VDD=1.8V, CL=10pF*
 """
         return report
 
     def save(self, report: str) -> Path:
-        """Save report to docs/reports/resume_metrics.md"""
-        path = self.reports_dir / "resume_metrics.md"
+        """Save report to docs/reports/performance_summary.md"""
+        path = self.reports_dir / "performance_summary.md"
         path.write_text(report, encoding="utf-8")
-        log.info("Resume metrics saved: %s", path)
+        log.info("Performance summary saved: %s", path)
         return path
 
     def save_json(self) -> Path:

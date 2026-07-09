@@ -1,10 +1,10 @@
 * =============================================================================
 * AutoAnalog — Two-Stage CMOS Op-Amp Subcircuit  (Rev 2 — Verified)
 * =============================================================================
-* Verified operating point (ngspice, TSMC 180nm TT, T=27C, VBIAS=0.57V):
+* Verified operating point (ngspice, TSMC-180nm-class model, T=27C, VBIAS=0.57V):
 *   DC Gain      = 61.9 dB
-*   GBW          = 12.9 MHz  [TARGET: 10 MHz ✓]
-*   Phase Margin = 75°       [TARGET: 60°    ✓]
+*   GBW          = 15.6 MHz  [TARGET: 10 MHz  OK]
+*   Phase Margin = 72.9°     [TARGET: 60 deg  OK]
 *   VOUT1        = 1.078V
 *   VTAIL        = 1.648V
 *

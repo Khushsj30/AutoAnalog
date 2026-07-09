@@ -256,8 +256,8 @@ git:
   auto_commit: false
 baseline_results:
   dc_gain_db: 61.9
-  gbw_mhz: 12.9
-  phase_margin_deg: 75.0
+  gbw_mhz: 15.6
+  phase_margin_deg: 72.9
   vbias_v: 0.57
   status: verified_ngspice
-  note: Baseline before optimization. GBW and PM meet spec. Gain needs optimizer.
+  note: Baseline before optimization (matches results/optimization/random_search_progress.csv row 1). GBW and PM meet spec. Gain needs optimizer.

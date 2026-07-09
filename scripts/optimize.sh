@@ -46,4 +46,4 @@ python3 -m autoanalog.optimization.runner --algorithm "${ALGORITHM}"
 
 info "Optimization complete."
 info "Pareto front saved to: ${PROJECT_ROOT}/results/"
-info "Resume metrics saved to: ${PROJECT_ROOT}/docs/reports/"
+info "performance summary saved to: ${PROJECT_ROOT}/docs/reports/"

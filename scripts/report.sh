@@ -3,7 +3,7 @@
 # AutoAnalog — Report Generator
 # =============================================================================
 # Generates HTML, PDF, and Markdown reports from simulation and optimization
-# results.  Also produces the resume metrics and GitHub README update.
+# results.  Also produces the performance summary and GitHub README update.
 #
 # Usage:
 #   ./scripts/report.sh [--format FORMAT]
@@ -31,4 +31,4 @@ FORMAT="all"
 info "Generating reports (format: ${FORMAT})…"
 python3 -m autoanalog.reporting.generator --format "${FORMAT}"
 info "Reports saved to: ${PROJECT_ROOT}/docs/reports/"
-info "Resume metrics  : ${PROJECT_ROOT}/docs/reports/resume_metrics.md"
+info "Performance summary: ${PROJECT_ROOT}/docs/reports/performance_summary.md"

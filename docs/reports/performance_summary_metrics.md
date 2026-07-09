@@ -1,4 +1,4 @@
-# AutoAnalog — Resume Metrics Report
+# AutoAnalog — Performance Summary Report
 *Generated: 2026-07-08 23:01*
 
 ---
@@ -14,9 +14,9 @@
 
 ---
 
-## Resume Bullets
+## Key Metrics
 
-Copy these directly onto your resume. Every number is from real simulation data.
+Every number below is from real simulation data.
 
 **Bullet 1 (Lead with impact):**
 > Designed and optimized a transistor-level two-stage CMOS operational amplifier using automated design-space exploration across 2,000+ operating points, improving DC gain by 22%, GBW by 1.1× and reducing power by 0%.

@@ -6,7 +6,7 @@
 #   - Circuit topology description
 #   - Simulation results with inline plots
 #   - Optimization results
-#   - Resume metrics
+#   - Performance summary
 #
 # Author  : AutoAnalog Framework
 # =============================================================================

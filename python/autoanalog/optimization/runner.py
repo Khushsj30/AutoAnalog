@@ -3,7 +3,7 @@
 # =============================================================================
 # Orchestrates the full optimization pipeline:
 #   1. Random Search  (fast exploration, ~200 runs)
-#   2. Saves results and generates resume metrics
+#   2. Saves results and generates performance summary
 #
 # Usage (CLI):
 #   python3 -m autoanalog.optimization.runner
@@ -25,7 +25,7 @@ from typing import Optional, Dict, Any
 from autoanalog.config_loader import get_config
 from autoanalog.logger import get_logger
 from autoanalog.optimization.random_search import RandomSearchOptimizer, RandomSearchResult
-from autoanalog.optimization.resume_metrics import ResumeMetrics
+from autoanalog.optimization.performance_summary import PerformanceSummary
 
 log = get_logger(__name__)
 
@@ -83,8 +83,8 @@ class OptimizationRunner:
         total_time = (time.perf_counter() - t_start) / 60.0
         n_sims = rs_result.n_total
 
-        # --- Generate Resume Metrics ---
-        self._generate_resume_metrics(rs_result, n_sims, total_time)
+        # --- Generate Performance Summary ---
+        self._generate_performance_summary(rs_result, n_sims, total_time)
 
         # --- Final Summary ---
         self._print_final_summary(rs_result, n_sims, total_time)
@@ -97,28 +97,28 @@ class OptimizationRunner:
             "baseline": self.baseline_metrics,
         }
 
-    def _generate_resume_metrics(
+    def _generate_performance_summary(
         self,
         rs_result: RandomSearchResult,
         n_sims: int,
         opt_time_min: float,
     ) -> None:
-        """Generate and save resume metrics from optimization results."""
+        """Generate and save performance summary from optimization results."""
         b = self.baseline_metrics
         opt = rs_result.best_metrics
 
         if not opt or not opt.get("gain_db"):
-            log.warning("No valid optimized metrics to generate resume from")
+            log.warning("No valid optimized metrics to generate performance summary from")
             return
 
-        resume = ResumeMetrics()
-        resume.load_baseline(
+        summary = PerformanceSummary()
+        summary.load_baseline(
             gain=b["gain_db"],
             gbw=b["gbw_mhz"],
             pm=b["phase_margin_deg"],
             power=b["power_mw"],
         )
-        resume.load_optimized(
+        summary.load_optimized(
             gain=opt.get("gain_db", b["gain_db"]),
             gbw=opt.get("gbw_mhz", b["gbw_mhz"]),
             pm=opt.get("phase_margin", b["phase_margin_deg"]),
@@ -128,13 +128,13 @@ class OptimizationRunner:
             best_params=rs_result.best_params,
         )
 
-        report = resume.generate()
-        saved_path = resume.save(report)
-        resume.save_json()
+        report = summary.generate()
+        saved_path = summary.save(report)
+        summary.save_json()
 
-        log.info("Resume metrics generated: %s", saved_path)
+        log.info("Performance summary generated: %s", saved_path)
         log.info("\n" + "=" * 55)
-        log.info("RESUME BULLET (copy this to your CV):")
+        log.info("KEY METRICS SUMMARY:")
         log.info("=" * 55)
 
         # Extract and print the first bullet
@@ -177,7 +177,7 @@ class OptimizationRunner:
                 opt.get("phase_margin", b["phase_margin_deg"]))
         log.info("")
         log.info("  Results saved to : results/optimization/")
-        log.info("  Resume metrics   : docs/reports/resume_metrics.md")
+        log.info("  Performance summary: docs/reports/performance_summary.md")
         log.info("=" * 55)
 
 

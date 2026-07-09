@@ -8,8 +8,8 @@
 [![Platform](https://img.shields.io/badge/Platform-Ubuntu%2024.04%20%7C%20WSL2-purple)](https://ubuntu.com)
 
 > *Designed and optimized a transistor-level two-stage CMOS operational amplifier using
-> automated design-space exploration across 3,200+ operating points, improving DC gain by 31%,
-> GBW by 3.8× and reducing power by 42%.*
+> automated random-search design-space exploration across 2,000+ operating points, improving
+> DC gain by 22% and GBW by 1.1×, verified against ngspice SPICE simulation.*
 
 ---
 
@@ -40,7 +40,7 @@ tools (no Cadence, no Synopsys license required).
 
 | Typical Student Project | AutoAnalog |
 |---|---|
-| Manual transistor sizing | Automated multi-objective optimization (NSGA-II + Bayesian) |
+| Manual transistor sizing | Automated random-search optimization over 2,000+ SPICE-simulated points (NSGA-II/Bayesian scaffolded, not yet implemented) |
 | One simulation per run | 15+ analysis types per design point |
 | Hand-drawn bode plots | Interactive Plotly dashboards |
 | No variation analysis | 200-run Monte Carlo + 5-corner PVT analysis |
@@ -114,7 +114,7 @@ design_config.yaml
                     HTML │ PDF │ Markdown
                                │
                                ▼
-                        Resume Metrics
+                        Performance Summary
 ```
 
 ---
@@ -172,7 +172,7 @@ Compensation: Miller capacitor Cc + zero-cancellation resistor Rc
 | Input Offset | ≤ 5 | mV |
 | Supply Voltage | 1.8 | V |
 | Load Capacitance | 10 | pF |
-| Process | TSMC 180nm | — |
+| Process | TSMC-180nm-class (generic BSIM3v3 model, not an NDA'd foundry PDK) | — |
 | Temperature | −40 to 125 | °C |
 
 ---
@@ -239,12 +239,14 @@ The script installs ngspice, xschem, magic, klayout, and all Python dependencies
 
 ## Optimization Engine
 
-AutoAnalog implements four optimization strategies:
+AutoAnalog currently implements and runs:
 
-1. **Random Search** — establishes a performance baseline quickly
-2. **Grid Search** — exhaustive 2D parameter sweeps for insight
-3. **NSGA-II** — true multi-objective Pareto front optimization
-4. **Bayesian Optimization** — Gaussian Process surrogate model, most sample-efficient
+1. **Random Search** — the optimizer actually used to produce every number in the Results
+   section below: 2,000+ real ngspice simulations, each a different transistor sizing.
+
+The config file also defines parameter bounds/hyperparameters for **Grid Search**, **NSGA-II**,
+and **Bayesian Optimization** — these are scaffolded (config + design-space code exist) but not
+yet implemented/executed. Listed under Future Work until they actually run.
 
 Design variables optimized simultaneously:
 
@@ -286,6 +288,10 @@ python3 scripts/generate_report.py
 
 ## Future Work
 
+- [ ] Implement and run NSGA-II multi-objective optimization (DEAP)
+- [ ] Implement and run Bayesian optimization (scikit-learn GP surrogate)
+- [ ] Implement Grid Search
+- [ ] Add real power measurement to the objective function (currently not simulated/scored)
 - [ ] Layout automation with Magic VLSI DRC/LVS integration
 - [ ] Extended Monte Carlo with Pelgrom mismatch model
 - [ ] Three-stage op-amp topology support

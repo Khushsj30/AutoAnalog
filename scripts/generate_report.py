@@ -127,7 +127,7 @@ def main():
     log.info("  HTML report  : %s", report_path)
     log.info("  Bode plot    : %s/bode/bode_plot.png",
             cfg.paths["plots"])
-    log.info("  Resume       : %s/resume_metrics.md",
+    log.info("  Summary      : %s/performance_summary.md",
             cfg.paths["reports"])
     log.info("")
     log.info("  Open the report:")
