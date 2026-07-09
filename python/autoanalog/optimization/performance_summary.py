@@ -119,12 +119,12 @@ class PerformanceSummary:
         power_red_str = f"{power_red:.0f}%"
         n_sims_str    = f"{n_sims:,}+"
 
-        report = f"""# AutoAnalog — Performance Summary Report
+        report = f"""# AutoAnalog — Performance Summary
 *Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}*
 
 ---
 
-## Performance Summary
+## Metrics Table
 
 | Metric | Baseline | Optimized | Improvement |
 |--------|----------|-----------|-------------|
@@ -140,13 +140,13 @@ class PerformanceSummary:
 
 Every number below is from real simulation data.
 
-**Bullet 1 (Lead with impact):**
+**Summary Point 1 (Overview):**
 > Designed and optimized a transistor-level two-stage CMOS operational amplifier using automated random-search design-space exploration across {n_sims_str} operating points, improving DC gain by {gain_imp_str} and GBW by {gbw_ratio_str}.
 
-**Bullet 2 (Technical depth):**
+**Summary Point 2 (Technical depth):**
 > Developed a Python-ngspice analog IC automation framework executing AC, DC, transient, Monte Carlo, PVT corner and temperature analyses with automatic Bode plot generation and HTML/PDF report synthesis.
 
-**Bullet 3 (Systems thinking):**
+**Summary Point 3 (Systems thinking):**
 > Built a random-search-based design-space optimization engine reducing manual transistor sizing effort significantly while simultaneously maximizing gain and phase margin across {n_sims_str} real SPICE simulations.
 
 ---
